@@ -157,7 +157,7 @@ public class Peer extends PeerSocketHandler {
     // Outstanding pings against this peer and how long the last one took to complete.
     private final ReentrantLock lastPingTimesLock = new ReentrantLock();
     @GuardedBy("lastPingTimesLock") private long[] lastPingTimes = null;
-    private final CopyOnWriteArrayList<PendingPing> pendingPings;
+    public final CopyOnWriteArrayList<PendingPing> pendingPings;
     private static final int PING_MOVING_AVERAGE_WINDOW = 20;
 
     private volatile VersionMessage vPeerVersionMessage;
@@ -1573,6 +1573,14 @@ public class Peer extends PeerSocketHandler {
         pendingPings.add(pendingPing);
         sendMessage(new Ping(pendingPing.nonce));
         return pendingPing.future;
+    }
+
+    public void pingTimeout() {
+        for (PendingPing ping : pendingPings)
+            ping.complete();
+
+        pendingPings.clear();
+        timeoutOccurred();
     }
 
     /**

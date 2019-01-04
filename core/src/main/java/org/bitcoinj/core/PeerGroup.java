@@ -1569,9 +1569,11 @@ public class PeerGroup implements TransactionBroadcaster {
                         return;  // Disabled.
                     }
                     for (Peer peer : getConnectedPeers()) {
-                        if (peer.getPeerVersionMessage().clientVersion < params.getProtocolVersionNum(NetworkParameters.ProtocolVersion.PONG))
-                            continue;
-                        peer.ping();
+                        if (peer.getPeerVersionMessage().clientVersion >= params.getProtocolVersionNum(NetworkParameters.ProtocolVersion.PONG))
+                            if (peer.pendingPings.size() >= 2)
+                                peer.pingTimeout();
+                            else
+                                peer.ping();
                     }
                 } catch (Throwable e) {
                     log.error("Exception in ping loop", e);  // The executor swallows exceptions :(

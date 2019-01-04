@@ -196,6 +196,25 @@ public class PeerGroupTest extends TestWithPeerGroup {
     }
 
     @Test
+    public void receiveTxBroadcast1() throws Exception {
+        // Check that when we receive transactions on all our peers, we do the right thing.
+        peerGroup.start();
+
+        // Create a couple of peers.
+        InboundMessageQueuer p1 = connectPeer(1);
+        InboundMessageQueuer p2 = connectPeer(2);
+
+        for (int i = 0 ; i < 4 ; i++)
+            for (Peer peer : peerGroup.getConnectedPeers())
+                if (peer.pendingPings.size() >= 2)
+                    peer.pingTimeout();
+                else
+                    peer.ping();
+
+        assertEquals(peerGroup.getConnectedPeers().size(), 0);
+    }
+
+    @Test
     public void receiveTxBroadcast() throws Exception {
         // Check that when we receive transactions on all our peers, we do the right thing.
         peerGroup.start();

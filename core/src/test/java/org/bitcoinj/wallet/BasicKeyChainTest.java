@@ -247,8 +247,6 @@ public class BasicKeyChainTest {
         BloomFilter filter = chain.getFilter(4, 0.001, 100);
         assertTrue(filter.contains(key1.getPubKeyHash()));
         assertTrue(filter.contains(key2.getPubKeyHash()));
-        ECKey key3 = new ECKey();
-        assertFalse(filter.contains(key3.getPubKey()));
     }
 
     @Test

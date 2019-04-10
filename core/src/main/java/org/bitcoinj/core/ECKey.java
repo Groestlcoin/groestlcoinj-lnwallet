@@ -703,12 +703,7 @@ public class ECKey implements EncryptableItem {
             return true;
 
         if (Secp256k1Context.isEnabled()) {
-            try {
-                return NativeSecp256k1.verify(data, signature.encodeToDER(), pub);
-            } catch (NativeSecp256k1Util.AssertFailException e) {
-                log.error("Caught AssertFailException inside secp256k1", e);
-                return false;
-            }
+            return NativeSecp256k1.verify(data, signature.encodeToDER(), pub);
         }
 
         ECDSASigner signer = new ECDSASigner();
@@ -733,12 +728,7 @@ public class ECKey implements EncryptableItem {
      */
     public static boolean verify(byte[] data, byte[] signature, byte[] pub) {
         if (Secp256k1Context.isEnabled()) {
-            try {
-                return NativeSecp256k1.verify(data, signature, pub);
-            } catch (NativeSecp256k1Util.AssertFailException e) {
-                log.error("Caught AssertFailException inside secp256k1", e);
-                return false;
-            }
+            return NativeSecp256k1.verify(data, signature, pub);
         }
         return verify(data, ECDSASignature.decodeFromDER(signature), pub);
     }
